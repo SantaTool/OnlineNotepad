@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Online Notepad - Free, Private & Responsive</title>
+  <meta name="description" content="Free online notepad. Save notes, edit, and download them. Secure, responsive, and no login required.">
+  <meta name="keywords" content="online notepad, notepad, free notes, text editor, write online, quick notes">
+  <meta name="author" content="OpenAI Assistant" />
+  <meta property="og:title" content="Online Notepad - Free, Secure & Private">
+  <meta property="og:description" content="Write and save notes online, with no login. Fast, responsive and private.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com">
+  <meta property="og:image" content="https://yourdomain.com/og-image.png">
+  <link rel="canonical" href="https://yourdomain.com">
+
+  <!-- Bootstrap & FontAwesome CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bs-body-bg);
+      color: var(--bs-body-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .notepad {
+      min-height: 70vh;
+      resize: none;
+      padding: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      width: 100%;
+    }
+
+    .btn-group {
+      margin: 1rem 0;
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding: 1rem 0;
+      background: #f8f9fa;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    .dark-mode {
+      background-color: #121212 !important;
+      color: #f1f1f1 !important;
+    }
+
+    .dark-mode textarea {
+      background-color: #1e1e1e !important;
+      color: #e0e0e0 !important;
+    }
+    .count-italic {
+      font-style: italic;
+      font-weight: normal;
+    }
+    .semibold-label {
+      font-family: 'Segoe UI Semibold', 'Segoe UI', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container py-4">
+    <h1 class="text-center mb-4">📝 Online Notepad</h1>
+    <div id="counts" class="text-center mb-3">
+      <span id="wordCount" class="count-italic">Words-count: 0</span>
+      <span id="charCount" class="count-italic ms-3">Characters-count: 0</span>
+      <span id="spaceCount" class="count-italic ms-3">Spaces-count: 0</span>
+      <span id="specialCharCount" class="count-italic ms-3">Special-Characters-count: 0</span>
+      <span id="digitCount" class="count-italic ms-3">Digits-count: 0</span>
+    </div>
+    <div class="mb-3">
+      <textarea id="note" class="notepad form-control" rows="15" placeholder="Start typing here..."></textarea>
+    </div>
+
+    <div class="btn-group d-flex flex-wrap justify-content-center" role="group">
+      <button class="btn btn-success m-1" onclick="saveNote()"><i class="fa fa-save"></i> Save</button>
+      <button class="btn btn-primary m-1" onclick="loadNote()"><i class="fa fa-upload"></i> Load</button>
+      <button class="btn btn-warning m-1" onclick="clearNote()"><i class="fa fa-trash"></i> Clear</button>
+      <button class="btn btn-info m-1" onclick="downloadNote()"><i class="fa fa-download"></i> Download</button>
+      <button class="btn btn-dark m-1" onclick="toggleDarkMode()"><i class="fa fa-moon"></i> Dark Mode</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Online Notepad | Secure, Private, Free</p>
+    <p>
+      <small>
+        Built with ❤️ using HTML, Bootstrap & JavaScript | Very Simple, Plain Notepad<br>
+        If you find anything that could be helpful or want to see some more features, please feel free to email us at <b><i>kaus130dbn@gmail.com</i></b>
+      </small>
+    </p>
+    <nav aria-label="footer links">
+      <!-- Privacy and Terms links removed -->
+    </nav>
+  </footer>
+  <script>
+    const noteArea = document.getElementById('note');
+    const wordCountSpan = document.getElementById('wordCount');
+    const charCountSpan = document.getElementById('charCount');
+    const spaceCountSpan = document.getElementById('spaceCount');
+    const specialCharCountSpan = document.getElementById('specialCharCount');
+    const digitCountSpan = document.getElementById('digitCount');
+
+    function updateCounts() {
+      const text = noteArea.value;
+      const trimmed = text.trim();
+      const words = trimmed.length > 0 ? trimmed.split(/\s+/).length : 0;
+      const chars = text.length;
+      const spaces = (text.match(/ /g) || []).length;
+      const specialChars = (text.match(/[^a-zA-Z0-9\s]/g) || []).length;
+      const digits = (text.match(/[0-9]/g) || []).length;
+      wordCountSpan.textContent = "Words-count: " + words;
+      charCountSpan.textContent = "Characters-count: " + chars;
+      spaceCountSpan.textContent = "Spaces-count: " + spaces;
+      specialCharCountSpan.textContent = "Special-Characters-count: " + specialChars;
+      digitCountSpan.textContent = "Digits-count: " + digits;
+    }
+
+    noteArea.addEventListener('input', updateCounts);
+    window.addEventListener('DOMContentLoaded', updateCounts);
+
+    function saveNote() {
+      localStorage.setItem('notepad-content', noteArea.value);
+      alert('Note saved to local storage!');
+    }
+
+    function loadNote() {
+      const content = localStorage.getItem('notepad-content');
+      if (content) {
+        noteArea.value = content;
+        alert('Note loaded from local storage!');
+      } else {
+        alert('No saved note found.');
+      }
+    }
+
+    function clearNote() {
+      if (confirm('Are you sure you want to clear the note?')) {
+        noteArea.value = '';
+      }
+    }
+
+    function downloadNote() {
+      const blob = new Blob([noteArea.value], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'note.txt';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+
+</body>
+</html>
